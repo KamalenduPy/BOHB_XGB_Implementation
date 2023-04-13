@@ -7,14 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1OMYoUJpyud1sB-jrwTmQwj4QdgYvUhpE
 """
 
-# !git clone https://github.com/ArlindKadra/tabular_baselines.git another approach
-
-# Commented out IPython magic to ensure Python compatibility.
-# https://github.com/goktug97/bohb-hpo
-
-!git clone https://github.com/goktug97/bohb-hpo
-
-# %cd '/content/bohb-hpo/'
 
 import requests
 import os
@@ -30,27 +22,11 @@ import bohb.configspace as cs
 
 import pandas as pd
 
-!pip install -q kaggle
+### Import the data
 
-from google.colab import files
 
-files.upload()
+fish=pd.read_csv('/data/Fish.csv')
 
-! mkdir ~/.kaggle
-
-! cp kaggle.json ~/.kaggle/
-
-! chmod 600 ~/.kaggle/kaggle.json
-
-! kaggle datasets list
-
-!kaggle datasets download -d aungpyaeap/fish-market
-
-!unzip fish-market.zip
-
-fish=pd.read_csv('Fish.csv')
-print(fish.shape)
-fish.head()
 
 import requests
 import os
