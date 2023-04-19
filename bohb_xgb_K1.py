@@ -7,27 +7,6 @@ Original file is located at
     https://colab.research.google.com/drive/1OMYoUJpyud1sB-jrwTmQwj4QdgYvUhpE
 """
 
-
-import requests
-import os
-import hashlib
-import tempfile
-import gzip
-
-import torch
-import numpy as np
-
-from bohb import BOHB
-import bohb.configspace as cs
-
-import pandas as pd
-
-### Import the data
-
-
-fish=pd.read_csv('/data/Fish.csv')
-
-
 import requests
 import os
 import hashlib
