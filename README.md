@@ -1,2 +1,3 @@
 # BOHB_XGB_Implementation
-Hyperparameter Optimization using Bayesian Optimization Hyper Band implementation on Tree based models like XGB
+This code provides a simple implementation of Hyperparameter Optimization using Bayesian Optimization combined with HyperBand on tree based models like XGB.  
+
