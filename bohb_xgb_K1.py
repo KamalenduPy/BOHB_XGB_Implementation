@@ -23,47 +23,35 @@ from sklearn.ensemble import GradientBoostingClassifier
 
 SEED = 123
 
-def fetch_fish():
-    idx = np.arange(0, 128+16)
-    np.random.shuffle(idx)
-
-    fish=pd.read_csv('Fish.csv')
-
-    fish['Species']=fish['Species'].map({'Perch':0,'Bream':1,'Roach':2,'Pike':3,'Parkki':4,'Whitefish':5})
-
-    X=fish.drop(['Species'],axis=1)
-    Y=fish[['Species']]
-
-    X_train = X.iloc[idx[:128]].to_numpy()
-    Y_train = Y.iloc[idx[:128]].to_numpy().reshape(-1,)
-
-    X_test = X.iloc[idx[128:]].to_numpy()
-    Y_test = Y.iloc[idx[128:]].to_numpy().reshape(-1,)
-
-    return X_train, Y_train, X_test, Y_test
-
-
-def train_xgb(n_trees,learning_rate, max_depth,x_train, y_train, x_test, y_test,subsample):
-    
-    x_train, y_train, x_test, y_test = fetch_fish()
-    import xgboost as xgb
-    from sklearn.metrics import accuracy_score
-
-    xgb_cl = xgb.XGBClassifier(x_train=x_train, y_train=y_train, x_test=x_test, y_test=y_test,subsample=subsample,
-                n_trees=n_trees,learning_rate=learning_rate, max_depth=max_depth)
-    model=xgb_cl.fit(x_train,y_train)
-    y_pred=model.predict(x_test)
-    loss = 1-(accuracy_score(y_test, y_pred))
-    return loss
 
 if __name__ == '__main__':
+    SEED=7
+    
+    fish=pd.read_csv('Fish.csv')
     np.random.seed(SEED)
-    x_train, y_train, x_test, y_test = fetch_fish()
+    fish['Species']=fish['Species'].map({'Perch':0,'Bream':1,'Roach':2,'Pike':3,'Parkki':4,'Whitefish':5,'Smelt':6})
+    dev_frac=0.8
 
-    def evaluate(params, budget):
-        loss = train_xgb(**params, x_train=x_train, y_train=y_train,
-                           x_test=x_test, y_test=y_test, subsample=(1-1/budget**2))
-        
+
+    n_obs=fish.shape[0]
+    n_dev=round(n_obs*dev_frac)
+
+    dev=fish.iloc[:n_dev]
+    oot=fish.iloc[n_dev:]
+    dev['Species'][12]=3
+    target='Species'
+
+    max_budget=2000
+    min_budget=1
+    
+
+
+    #### Run Algo
+
+    def worker(params, budget,max_budget=max_budget, min_budget=min_budget):
+        subsample=(((1-0.05)/(max_budget-min_budget))*(budget-min_budget))+0.05
+        # subsample=(1-1/budget**2)
+        loss = train_xgb(**params, dev=dev, oot=oot,target=target, subsample=subsample)
         return loss
 
     n_trees = cs.IntegerUniformHyperparameter('n_trees', lower=1,upper=20)
@@ -75,11 +63,6 @@ if __name__ == '__main__':
     configspace = cs.ConfigurationSpace([n_trees, max_depth, learning_rate],
                                         seed=7)
 
-    opt = BOHB(configspace, evaluate, max_budget=81, min_budget=1, n_proc=2)
+    opt = BOHB(configspace, worker, max_budget=max_budget, min_budget=min_budget, n_proc=2)
     logs = opt.optimize()
     print(logs)
-
-
-
-
-
