@@ -4,7 +4,7 @@ import numpy as np
 import scipy
 import statsmodels.api as sm
 
-import bohb.configspace as cs
+import bohb.configspace_v1 as cs
 import dask
 
 
