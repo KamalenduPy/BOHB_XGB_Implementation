@@ -47,6 +47,7 @@ if __name__ == '__main__':
 
 
     #### Run Algo
+    from bohb.setup import train_xgb
 
     def worker(params, budget,max_budget=max_budget, min_budget=min_budget):
         subsample=(((1-0.05)/(max_budget-min_budget))*(budget-min_budget))+0.05
