@@ -83,8 +83,8 @@ class Configuration:
             string.append(
                 # (f'{"Name:":>8} {hyperparameter.name: <{self.max_length}} | '
                 #  f"Value: {hyperparameter.value}\n").ljust(10))
-                (str("Name:") +str(hyperparameter.name) + ' |'
-                +"Value: "+str(hyperparameter.value)).ljust(10))
+                (str("Name:") +str(hyperparameter.name) 
+                +"Value: "+str(hyperparameter.value)+ ' || ').ljust(10))
         return ''.join(string)
 
 
